@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/theme.css" type="text/css">
+  <link rel="stylesheet" href="theme.css" type="text/css">
+  <title>Split and Merge Files</title>
+  <meta name="keywords" content="Split,Merge">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+
+<body class="">
+  <div class="py-3">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="text-center display-2 filter-fade-in">Parts Download</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-3 bg-gradient">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <form class="text-center" action="" method="POST">
+            <div class="form-group text-left"> <label><b>Dowload Link :</b></label>
+              <input type="text" class="form-control" placeholder="Enter Link of file" id="dfile" name="dfile" required="required"> </div>
+            <div class="form-group text-left"> <label><b>Save to :</b></label>
+              <input type="text" class="form-control" placeholder="Out put file path" id="sfile" name="sfile" required="required"> </div>
+            <div class="form-group text-left"><label for="exampleInputEmail1"><b>Part Size :</b></label>
+              <input type="number" class="form-control" id="psize" placeholder="Size if each part in (Kb)" name="psize">
+            </div>
+            <button type="button" class="btn text-center btn-success" Onclick="checkfexist();">Submit</button>
+          </form>
+        </div>
+        <div class="col-md-4"></div>
+      </div>
+    </div>
+  </div>
+<div class="">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 col-sm-offset-5 col-md-8 offset-md-2">
+          <div class="alert alert-success text-center my-3 p-3" style="display:none" id="salert">The file has been successfully  downloaded part by part.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-1 bg-gradient">
+  <form class="text-center" method="POST" target="myIframe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="input-group text-center bg-gradient">
+            <input type="text" class="form-control form-control-lg text-left" placeholder="http://" id="linkurl">
+            <div class="input-group-append">
+              <button class="btn btn-success px-4" type="button" Onclick="setURL();">Visit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+	</form>
+	<div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="input-group text-center bg-gradient">
+            <iframe height="300px" width="100%" src="" name="myIframe" id="myIframe"> Your browser doesn't load this iframe.</iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+	<script>
+  $(function() {
+    $( "#progressbar" ).progressbar({
+      aria-valuenow: 90
+    });
+  });
+  </script>
+  <script>
+  function stratdown() {    
+	 var dfilename = $('#dfile').val();
+	 var sfilename = $('#sfile').val();
+	 var partsizevalue = $('#psize').val();
+      $.ajax({
+           type: "POST",
+           url: 'trigger.php',
+           data:{dfile: dfilename, sfile: sfilename, psize: partsizevalue}, 
+           success:function(result) {
+		   alert("The file has been successfully downloaded");
+             $("#salert").show();
+             setTimeout(function() { $("#salert").hide(); }, 5000);
+
+           }
+		 
+      });
+	   //alert("working");
+}
+function checkfexist() {
+	var sfilename = $('#sfile').val();
+	if (sfilename !='') {
+	$.ajax({
+			url: sfilename,
+			type: 'GET',
+			error: function()
+			{
+			   stratdown();
+			},
+			success: function()
+			{
+			var site = prompt("The File already exists rename bellow", "");
+			if (site != '') {
+				document.getElementById("sfile").value = site;
+			}else {
+			alert("File name cannot be empty");
+			}
+			}
+		});
+	}else{
+	alert ('File name cannot be empty');}
+	}
+function setURL(){
+document.getElementById('myIframe').src = "";
+ setTimeout(function () {
+document.getElementById('myIframe').src = document.getElementById('linkurl').value;
+}, 0);
+}
+  </script>
+</body>
+
+</html>
